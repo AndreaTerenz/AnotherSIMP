@@ -28,24 +28,40 @@ enum INSTRUCTION_CODE_T {
 };
 #define MAX_INSTR_CODE 0x34
 
-extern std::map<INSTRUCTION_CODE_T, unsigned short> args_per_op;
+struct instr_info_t {
+    instr_info_t(std::string n, unsigned int c) : name(n), args_count(c) {}
+    instr_info_t(instr_info_t* other)
+        : name(other->name), args_count(other->args_count) {}
+    instr_info_t() : name(""), args_count(0) {}
+
+    std::string get_name() { return name; }
+    unsigned int get_args_count() { return args_count; }
+
+private:
+    std::string name;
+    unsigned int args_count;
+};
+
+extern std::map<INSTRUCTION_CODE_T, instr_info_t> op_infos;
 
 struct instruction_t {
-    instruction_t(INSTRUCTION_CODE_T c) : code(c), args_count(args_per_op[c]) { }
+    instruction_t(INSTRUCTION_CODE_T c) :
+        code(c), info(op_infos[c]) { }
     instruction_t(instruction_t* other) :
-        code(other->code), args_count(other->args_count),
+        code(other->code), info(other->info),
         arg0(other->arg0), arg1(other->arg1) { }
 
     void set_args(short a0 = 0, short a1 = 0) { arg0 = a0; arg1 = a1; }
 
     INSTRUCTION_CODE_T get_code() { return code; }
-    unsigned int get_args_count() { return args_count; }
+    unsigned int get_args_count() { return info.get_args_count(); }
+    std::string get_name() { return info.get_name(); }
     short get_arg(unsigned short a);
     std::string get_info();
 
 private:
     INSTRUCTION_CODE_T code;
-    unsigned int args_count;
+    instr_info_t info;
     short arg0 = 0;
     short arg1 = 0;
 };

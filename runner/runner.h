@@ -13,8 +13,10 @@ public:
     bool run_all();
     bool done() { return (!instructions.has_next()); }
 
-    void x() {
+    void print_instr_list() {
+        std::cout<<"\n";
         instructions.print();
+        std::cout<<"\n";
     }
 
     static bool is_valid_instruction(int i);

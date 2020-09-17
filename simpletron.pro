@@ -4,4 +4,12 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
-        main.cpp
+        main.cpp \
+        runner/instructions.cpp \
+        runner/memory.cpp \
+        runner/runner.cpp
+
+HEADERS += \
+    runner/instructions.h \
+    runner/memory.h \
+    runner/runner.h

@@ -17,6 +17,10 @@ std::map<INSTRUCTION_CODE_T, instr_info_t> op_infos =
     {BRANCH_NEG, {"BRANCH_NEG", 1}},
     {BRANCH_POS, {"BRANCH_POS", 1}},
     {BRANCH_ZERO, {"BRANCH_ZERO", 1}},
+    {BRANCH_REL, {"BRANCH_REL", 1}},
+    {BRANCH_NEG_REL, {"BRANCH_NEG_REL", 1}},
+    {BRANCH_POS_REL, {"BRANCH_POS_REL", 1}},
+    {BRANCH_ZERO_REL, {"BRANCH_ZERO_REL", 1}},
     {HALT, {"HALT", 0}}
 };
 
@@ -59,4 +63,12 @@ std::string instruction_t::get_info() {
         stream << std::hex << "args:[" << arg0 << "  " << arg1 << "]\t";
 
     return stream.str();
+}
+
+bool is_valid_instruction(unsigned int i) {
+    if (i <= 0xFFFFFF) {
+        unsigned int op_code = (i & 0xFF0000) / 0x10000;
+        return (op_infos.find((INSTRUCTION_CODE_T) op_code) != op_infos.end());
+    }
+    return false;
 }

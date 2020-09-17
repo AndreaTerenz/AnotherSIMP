@@ -19,11 +19,8 @@ public:
         std::cout<<"\n";
     }
 
-    static bool is_valid_instruction(int i);
-
 private:
     instr_list_t instructions{};
-    unsigned int program_counter = 0;
 
     Memory<double> num_mem{0xFFFF};
 

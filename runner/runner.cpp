@@ -1,32 +1,7 @@
 #include "runner.h"
 
-bool Runner::is_valid_instruction(int i) {
-    if (i >= 0x0 && i <= 0xFFFFFF)
-    {
-        int op_code = (i & 0xFF0000) / 0x10000;
-
-        switch (op_code) {
-        case NUM_IN:
-        case NUM_OUT:
-        case LOAD:
-        case STORE:
-        case ADD:
-        case SUBTR:
-        case MULT:
-        case DIV:
-        case BRANCH:
-        case BRANCH_NEG:
-        case BRANCH_POS:
-        case BRANCH_ZERO:
-        case HALT : return true;
-        }
-
-    }
-    return false;
-}
-
 bool Runner::add_instruction(int instr) {
-    if (Runner::is_valid_instruction(instr)) {
+    if (is_valid_instruction(instr)) {
         int op_code = (instr & 0xFF0000) / 0x10000;
 
         instruction_t instruction{static_cast<INSTRUCTION_CODE_T>(op_code)};
@@ -67,7 +42,7 @@ bool Runner::run_all() {
 bool Runner::run_next() {
     if (!done()) {
         instruction_t *next = instructions.next();
-
+        //std::cout<<next->get_info()<<"\n";
         switch (next->get_code()) {
         case NUM_IN: {
             short dest = next->get_arg(0);
@@ -192,14 +167,42 @@ bool Runner::run_next() {
 
             break;
         }
+        case BRANCH_REL: {
+            short offset = next->get_arg(0);
+            instructions.move_cursor_by(offset);
+
+            break;
+        }
+        case BRANCH_NEG_REL: {
+            if (num_acc < 0) {
+                short offset = next->get_arg(0);
+                instructions.move_cursor_by(offset);
+            }
+
+            break;
+        }
+        case BRANCH_POS_REL: {
+            if (num_acc > 0) {
+                short offset = next->get_arg(0);
+                instructions.move_cursor_by(offset);
+            }
+
+            break;
+        }
+        case BRANCH_ZERO_REL: {
+            if (num_acc == 0) {
+                short offset = next->get_arg(0);
+                instructions.move_cursor_by(offset);
+            }
+
+            break;
+        }
         case HALT:
             std::cout<<"HALTED\n";
             instructions.halt = true;
             break;
 
         }
-//      NOOOOOOOOOOOOT GOOD
-        program_counter++;
 
         return true;
     }

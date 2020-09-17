@@ -24,9 +24,13 @@ enum INSTRUCTION_CODE_T {
     BRANCH_NEG  = 0x31,
     BRANCH_POS  = 0x32,
     BRANCH_ZERO = 0x33,
-    HALT        = 0x34
+    BRANCH_REL  = 0x34,
+    BRANCH_NEG_REL  = 0x35,
+    BRANCH_POS_REL  = 0x36,
+    BRANCH_ZERO_REL = 0x37,
+    HALT        = 0x38
 };
-#define MAX_INSTR_CODE 0x34
+#define MAX_INSTR_CODE HALT
 
 struct instr_info_t {
     instr_info_t(std::string n, unsigned int c) : name(n), args_count(c) {}
@@ -77,6 +81,8 @@ struct instr_list_t {
         if (pos < list.size()) cursor = pos;
         return pos < list.size();
     }
+    bool move_cursor_by(unsigned int offset) { return move_cursor_to(cursor + offset - 1); }
+
     instruction_t* next();
     bool halt = false;
 
@@ -87,5 +93,7 @@ private:
     unsigned int cursor = 0;
 
 };
+
+bool is_valid_instruction(unsigned int i);
 
 #endif // INSTRUCTIONS_H
